@@ -62,6 +62,8 @@ apiVersion: projectcontour.io/v1
 kind: HTTPProxy
 metadata:
   name: spring-music
+  annotations:
+    projectcontour.io/ingress.class: contour-external
 spec:
   ingressClassName: contour
   virtualhost:
