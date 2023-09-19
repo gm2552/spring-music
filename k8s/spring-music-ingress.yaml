@@ -1,0 +1,52 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-music
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring-music
+  template:
+    metadata:
+      labels:
+        app: spring-music
+    spec:
+      containers:
+        - name: workload
+          image: us-central1-docker.pkg.dev/<project id>/k8slab/spring-music:1.0-<project id>
+          ports:
+            - containerPort: 8080
+          env:
+            - name: spring_profiles_active
+              value: blue
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-music
+spec:
+  selector:
+    app: spring-music
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: spring-music
+spec:
+  ingressClassName: contour
+  virtualhost:
+    fqdn: <external IP>.sslip.io
+  routes:
+    - conditions:
+        - prefix: /
+      services:
+        - name: spring-music
+          port: 80
+

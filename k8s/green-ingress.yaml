@@ -1,0 +1,14 @@
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: spring-music
+spec:
+  ingressClassName: contour
+  virtualhost:
+    fqdn: <external IP>.sslip.io
+  routes:
+    - conditions:
+        - prefix: /
+      services:
+        - name: spring-music-green
+          port: 80

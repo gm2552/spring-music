@@ -1,0 +1,51 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-music-green
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: spring-music-green
+  template:
+    metadata:
+      labels:
+        app: spring-music-green
+    spec:
+      containers:
+        - name: workload
+          image: us-central1-docker.pkg.dev/<project id>/k8slab/spring-music:1.0-<project id>
+          ports:
+            - containerPort: 8080
+          env:
+            - name: spring_profiles_active
+              value: green
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-connection
+                  key: url  
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-connection
+                  key: username  
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: my-release-postgresql
+                  key: postgres-password            
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-music-green
+spec:
+  selector:
+    app: spring-music-green
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: ClusterIP
