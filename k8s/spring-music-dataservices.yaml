@@ -44,32 +44,4 @@ spec:
                 secretKeyRef:
                   name: my-release-postgresql
                   key: postgres-password            
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: spring-music
-spec:
-  selector:
-    app: spring-music
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 8080
-  type: ClusterIP
----
-apiVersion: projectcontour.io/v1
-kind: HTTPProxy
-metadata:
-  name: spring-music
-spec:
-  ingressClassName: contour
-  virtualhost:
-    fqdn: <external IP>.sslip.io
-  routes:
-    - conditions:
-        - prefix: /
-      services:
-        - name: spring-music
-          port: 80
 
