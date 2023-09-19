@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: workload
-          image: us-central1-docker.pkg.dev/<project id>/k8slab/spring-music:1.0-<project id>
+          image: <APP IMAGE>
           ports:
             - containerPort: 8080
           env:
